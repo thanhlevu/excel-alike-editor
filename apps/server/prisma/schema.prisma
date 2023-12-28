@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Sheet {
+  id           String       @id
+  sheetName    String
+  createdAt    DateTime
+  lastEditedAt DateTime
+  creatorName  String
+  creatorEmail String
+  Cells        Cell[]
+  MergedCells  MergedCell[]
+}
+
+model Cell {
+  sheetId  String
+  rowIndex Int
+  colIndex Int
+  value    String
+  Sheet    Sheet  @relation(fields: [sheetId], references: [id])
+
+  @@id([sheetId, rowIndex, colIndex])
+}
+
+model MergedCell {
+  sheetId       String
+  startRowIndex Int
+  endRowIndex   Int
+  startColIndex Int
+  endColIndex   Int
+  Sheet         Sheet  @relation(fields: [sheetId], references: [id])
+
+  @@id([sheetId, startRowIndex, endRowIndex, startColIndex, endColIndex])
+}
