@@ -25,8 +25,8 @@ model Cell {
   sheetId  String
   rowIndex Int
   colIndex Int
-  value    String
-  Sheet    Sheet  @relation("Sheet_Cells", fields: [sheetId], references: [sheetId], onDelete: Cascade)
+  value    String?
+  Sheet    Sheet   @relation("Sheet_Cells", fields: [sheetId], references: [sheetId], onDelete: Cascade)
 
   @@id([sheetId, rowIndex, colIndex])
 }

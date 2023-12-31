@@ -63,10 +63,13 @@ const SheetTable: React.FC = () => {
   };
 
   const handleOnSave = async () => {
-    const curCells = hotTableComponent.current?.hotInstance?.getData() as (
-      | string
-      | null
-    )[][];
+    const curCells =
+      hotTableComponent.current?.hotInstance?.getSourceData() as (
+        | string
+        | number
+        | null
+      )[][];
+
     const newCellSet = convertTableToCellList(curCells);
 
     const mergeCellsPlugin: ExtendedMergeCells | undefined =

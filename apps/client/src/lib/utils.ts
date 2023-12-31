@@ -32,12 +32,12 @@ export const convertCellListToTable = (cellList: Cell[]) => {
   return table;
 };
 
-export const convertTableToCellList = (cells: (string | null)[][]) => {
+export const convertTableToCellList = (cells: (string | number | null)[][]) => {
   const cellList = cells.reduce(
     (acc, row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         acc.push({
-          value: cell,
+          value: cell ? cell.toString() : null,
           rowIndex,
           colIndex,
         });
