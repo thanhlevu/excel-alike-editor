@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 
 import { Button } from '@client/components/ui/button';
@@ -13,7 +12,7 @@ import {
   FormMessage,
 } from '@client/components/ui/form';
 import { Input } from '@client/components/ui/input';
-import { getCellsFromDefault } from '@client/lib/utils';
+import { getDefaultTable } from '@client/lib/utils';
 import { useAppStore } from '@client/store';
 import { trpc } from '@client/trpc';
 import { useEffect, useMemo } from 'react';
@@ -30,7 +29,7 @@ const formSchema = z.object({
 
 export function SheetForm() {
   const createSheet = trpc.createSheet.useMutation();
-  const updateSheet = trpc.updateSheet.useMutation();
+  const updateSheetInfo = trpc.updateSheetInfo.useMutation();
   const deleteSheet = trpc.deleteSheet.useMutation();
   const {
     selectedSheet,
@@ -69,26 +68,24 @@ export function SheetForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (viewMode === 'VIEWING' && selectedSheet) {
-      updateSheet.mutate(
+      updateSheetInfo.mutate(
         {
-          id: selectedSheet.id,
+          sheetId: selectedSheet.sheetId,
           sheetName: values.sheetName,
           creatorName: values.creatorName,
           creatorEmail: values.creatorEmail,
-          cells: [],
-          mergedCells: [],
         },
         {
           onSuccess: (data) => {
             updateSheets(
               sheets.map((sheet) => {
-                if (sheet.id === data.id) {
-                  return data;
+                if (sheet.sheetId === data.sheetId) {
+                  return { ...sheet, ...data };
                 }
                 return sheet;
               }),
             );
-            updateSelectedSheet(data);
+            updateSelectedSheet({ ...selectedSheet, ...data });
             updateViewMode('VIEWING');
           },
         },
@@ -96,19 +93,16 @@ export function SheetForm() {
       return;
     }
     if (viewMode === 'CREATION') {
-      const id = uuidv4();
       createSheet.mutate(
         {
-          id,
           sheetName: values.sheetName,
           creatorName: values.creatorName,
           creatorEmail: values.creatorEmail,
-          cells: getCellsFromDefault(id),
+          cells: getDefaultTable(),
           mergedCells: [],
         },
         {
           onSuccess: (data) => {
-            console.log('>>> data', data);
             updateSheets([...sheets, data]);
             form.reset();
 
@@ -124,11 +118,13 @@ export function SheetForm() {
   function onDelete() {
     if (selectedSheet) {
       deleteSheet.mutate(
-        { sheetId: selectedSheet.id },
+        { sheetId: selectedSheet.sheetId },
         {
           onSuccess: () => {
             updateSheets(
-              sheets.filter((sheet) => sheet.id !== selectedSheet?.id),
+              sheets.filter(
+                (sheet) => sheet.sheetId !== selectedSheet?.sheetId,
+              ),
             );
             onClose();
           },

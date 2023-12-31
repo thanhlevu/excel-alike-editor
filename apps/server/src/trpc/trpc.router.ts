@@ -2,9 +2,11 @@ import { INestApplication, Injectable } from '@nestjs/common';
 import prisma from '@server/prisma';
 import {
   SheetCreationInput,
+  SheetInfoUpdateInput,
   SheetSchema,
-  SheetUpdateInput,
+  SheetTableUpdateInput,
 } from '@server/prisma/schema';
+import { TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { z } from 'zod';
 import { TrpcService } from './trpc.service';
@@ -33,7 +35,7 @@ export class TrpcRouter {
                 const createdCell = await prisma.cell.create({
                   data: {
                     ...cell,
-                    sheetId: createdSheet.id,
+                    sheetId: createdSheet.sheetId,
                   },
                 });
                 return createdCell;
@@ -45,7 +47,7 @@ export class TrpcRouter {
                 const createdMergedCell = await prisma.mergedCell.create({
                   data: {
                     ...mergedCell,
-                    sheetId: createdSheet.id,
+                    sheetId: createdSheet.sheetId,
                   },
                 });
                 return createdMergedCell;
@@ -64,54 +66,73 @@ export class TrpcRouter {
           throw new Error('Failed to create sheet');
         }
       }),
-    updateSheet: this.trpc.procedure
-      .input(SheetUpdateInput)
+    updateSheetInfo: this.trpc.procedure
+      .input(SheetInfoUpdateInput)
       .mutation(async ({ input }) => {
-        const { cells, mergedCells, ...sheet } = input;
+        const newSheetInfo = input;
+        const updatedSheetInfo = await prisma.sheet.update({
+          data: {
+            ...newSheetInfo,
+            lastEditedAt: new Date(),
+          },
+          where: {
+            sheetId: newSheetInfo.sheetId,
+          },
+        });
+        return updatedSheetInfo;
+      }),
+    updateSheetTable: this.trpc.procedure
+      .input(SheetTableUpdateInput)
+      .mutation(async ({ input }) => {
+        const { sheetId, newCells, newMergedCells } = input;
         const updatedSheetData = await prisma.$transaction(async (prisma) => {
-          const updatedSheet = await prisma.sheet.update({
-            data: {
-              ...sheet,
-              lastEditedAt: new Date(),
-            },
-            where: {
-              id: sheet.id,
-            },
-          });
-
           await prisma.cell.deleteMany({
             where: {
-              sheetId: sheet.id,
+              sheetId,
             },
           });
 
           await prisma.mergedCell.deleteMany({
             where: {
-              sheetId: sheet.id,
+              sheetId,
             },
           });
 
-          const newCells = await Promise.all(
-            cells.map(async (cell) => {
-              const createdCell = await prisma.cell.create({
-                data: cell,
-              });
-              return createdCell;
-            }),
-          );
+          await prisma.cell.createMany({
+            data: newCells.map((cell) => ({
+              ...cell,
+              sheetId,
+            })),
+          });
 
-          const newMergedCells = await Promise.all(
-            mergedCells.map(async (mergedCell) => {
-              const createdMergedCell = await prisma.mergedCell.create({
-                data: mergedCell,
-              });
-              return createdMergedCell;
-            }),
-          );
+          await prisma.mergedCell.createMany({
+            data: newMergedCells.map((mergedCell) => ({
+              ...mergedCell,
+              sheetId,
+            })),
+          });
+
+          const updatedSheet = await prisma.sheet.findUnique({
+            where: {
+              sheetId,
+            },
+            include: {
+              Cells: true,
+              MergedCells: true,
+            },
+          });
+
+          if (!updatedSheet) {
+            throw new TRPCError({
+              code: 'NOT_FOUND',
+              message: 'Sheet not found',
+            });
+          }
+          const { Cells, MergedCells, ...sheet } = updatedSheet;
           return {
-            cells: newCells,
-            mergedCells: newMergedCells,
-            ...updatedSheet,
+            ...sheet,
+            cells: Cells || [],
+            mergedCells: MergedCells || [],
           };
         });
 
@@ -136,7 +157,7 @@ export class TrpcRouter {
         await prisma.$transaction(async (prisma) => {
           await prisma.sheet.delete({
             where: {
-              id: input.sheetId,
+              sheetId: input.sheetId,
             },
           });
           await prisma.cell.deleteMany({

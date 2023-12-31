@@ -1,7 +1,6 @@
-import { getCellsFromDefault } from '@client/lib/utils';
+import { getDefaultTable } from '@client/lib/utils';
 import { useAppStore } from '@client/store';
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 
@@ -27,7 +26,7 @@ const SheetList: React.FC = () => {
               )
               .map((sheet) => (
                 <Button
-                  key={sheet.id}
+                  key={sheet.sheetId}
                   onClick={() => updateSelectedSheet(sheet)}
                   variant={'secondary'}
                 >
@@ -39,13 +38,11 @@ const SheetList: React.FC = () => {
       )}
       <Button
         onClick={() => {
-          const id = uuidv4();
           updateNewSheet({
-            id,
             sheetName: '',
             creatorName: '',
             creatorEmail: '',
-            cells: getCellsFromDefault(id),
+            cells: getDefaultTable(),
             mergedCells: [],
           });
         }}

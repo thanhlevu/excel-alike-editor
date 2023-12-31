@@ -9,6 +9,8 @@ export type RouterOutput = inferRouterOutputs<AppRouter>;
 export type SheetCreationInput = RouterInput['createSheet'];
 
 export type Sheet = RouterOutput['getAllSheets'][0];
+export type Cell = Sheet['cells'][0];
+export type MergedCell = Sheet['mergedCells'][0];
 
 export const trpc = createTRPCReact<AppRouter>();
 

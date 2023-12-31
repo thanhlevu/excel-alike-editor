@@ -11,14 +11,14 @@ datasource db {
 }
 
 model Sheet {
-  id           String       @id
+  sheetId      String       @id @default(uuid())
   sheetName    String
   createdAt    DateTime
   lastEditedAt DateTime
   creatorName  String
   creatorEmail String
-  Cells        Cell[]
-  MergedCells  MergedCell[]
+  Cells        Cell[]       @relation("Sheet_Cells")
+  MergedCells  MergedCell[] @relation("Sheet_MergedCells")
 }
 
 model Cell {
@@ -26,7 +26,7 @@ model Cell {
   rowIndex Int
   colIndex Int
   value    String
-  Sheet    Sheet  @relation(fields: [sheetId], references: [id])
+  Sheet    Sheet  @relation("Sheet_Cells", fields: [sheetId], references: [sheetId], onDelete: Cascade)
 
   @@id([sheetId, rowIndex, colIndex])
 }
@@ -37,7 +37,7 @@ model MergedCell {
   endRowIndex   Int
   startColIndex Int
   endColIndex   Int
-  Sheet         Sheet  @relation(fields: [sheetId], references: [id])
+  Sheet         Sheet  @relation("Sheet_MergedCells", fields: [sheetId], references: [sheetId], onDelete: Cascade)
 
   @@id([sheetId, startRowIndex, endRowIndex, startColIndex, endColIndex])
 }
