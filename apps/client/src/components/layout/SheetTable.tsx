@@ -29,19 +29,26 @@ interface ExtendedMergeCells extends MergeCells {
 }
 
 const SheetTable: React.FC = () => {
-  const { selectedSheet, updateSelectedSheet, sheets, updateSheets } =
-    useAppStore();
+  const {
+    selectedSheet,
+    updateSelectedSheet,
+    sheets,
+    updateSheets,
+    updateViewMode,
+  } = useAppStore();
   const updateSheetTable = trpc.updateSheetTable.useMutation();
 
   const [isTableChanged, setIsTableChanged] = React.useState(false);
   const defaultDataTable = useMemo(() => DEFAULT_TABLE_DATA, []);
 
-  const data = useMemo(() => {
+  const tableData = useMemo(() => {
     if (selectedSheet) {
       return convertCellListToTable(selectedSheet.cells);
     }
     return defaultDataTable;
   }, [selectedSheet, defaultDataTable]);
+
+  const originalData = JSON.stringify(tableData);
 
   const mergeCells = useMemo(() => {
     if (selectedSheet) {
@@ -57,12 +64,19 @@ const SheetTable: React.FC = () => {
   const hotTableComponent = useRef<HotTable | null>(null);
 
   const handleDataChange = () => {
-    if (hotTableComponent.current) {
+    const curCells =
+      hotTableComponent.current?.hotInstance?.getSourceData() as (
+        | string
+        | number
+        | null
+      )[][];
+
+    if (tableData && curCells && JSON.stringify(curCells) !== originalData) {
       setIsTableChanged(true);
     }
   };
 
-  const handleOnSave = async () => {
+  const handleOnSave = () => {
     const curCells =
       hotTableComponent.current?.hotInstance?.getSourceData() as (
         | string
@@ -78,7 +92,7 @@ const SheetTable: React.FC = () => {
       mergeCellsPlugin?.mergedCellsCollection?.mergedCells || [];
     const newMergeCellSet = convertTableToMergeCellList(curMergeCells);
 
-    await updateSheetTable.mutate(
+    updateSheetTable.mutate(
       {
         sheetId: selectedSheet!.sheetId,
         newCells: newCellSet,
@@ -95,21 +109,26 @@ const SheetTable: React.FC = () => {
               return sheet;
             }),
           );
+          setIsTableChanged(false);
         },
       },
     );
   };
 
-  const handleOnCancel = () => {};
+  const handleOnCancel = () => {
+    updateSelectedSheet(null);
+    updateViewMode(null);
+    setIsTableChanged(false);
+  };
 
   return (
-    <div className="w-full h-full ">
+    <div className="w-full h-full p-8">
       <HotTable
         ref={hotTableComponent}
         formulas={{
           engine: hyperformulaInstance,
         }}
-        data={data}
+        data={tableData}
         colWidths={78}
         rowHeights={24}
         rowHeaders={true}
@@ -152,14 +171,15 @@ const SheetTable: React.FC = () => {
         renderer={'html'}
         licenseKey="non-commercial-and-evaluation"
       />
-      <div className={cn('flex gap-4 pt-8', !isTableChanged && '')}>
+      <div className={cn('flex gap-4 pt-8')}>
         <Button type="button" onClick={handleOnCancel} variant={'outline'}>
-          Cancel
+          Close
         </Button>
         <Button
           type="button"
-          onClick={async () => await handleOnSave()}
-          variant={'secondary'}
+          onClick={handleOnSave}
+          variant={'default'}
+          className={`${!isTableChanged && 'hidden'}`}
         >
           Save
         </Button>

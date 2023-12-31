@@ -1,18 +1,16 @@
 # How to run project
 
-- To run client and server apps:
-  pnpm dev
+0. Open terminal and cd into the project.
 
-## Cmd in /server
+1. Get into server repository, then run postgresql database using docker:
+   $ cd apps/server
+   $ npx prisma migrate dev
+   $ docker compose up dev-db -d
 
-- To run postgresql database using docker:
-  docker compose up dev-db -d
+2. At apps repository, run client and server apps:
+   $ pnpm dev
 
-- When update the database schema:
-  npx prisma migrate dev
+- Test the app at http://localhost:5173/
 
-- To generate new types from new schema:
-  npx prisma generate
-
-- To view database with prisma studio:
-  npx prisma studio
+- To view database with prisma studio, in server repo:
+  $ npx prisma studio

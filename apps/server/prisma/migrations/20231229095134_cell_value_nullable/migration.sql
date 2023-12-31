@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Cell" ALTER COLUMN "value" DROP NOT NULL;

@@ -143,47 +143,49 @@ export function SheetForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 max-w-[600px]"
+        className="flex flex-col max-h-full space-between w-full p-8"
       >
-        <FormField
-          control={form.control}
-          name="sheetName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-gray-500">Sheet name</FormLabel>
-              <FormControl>
-                <Input placeholder="Sheet name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="creatorName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-gray-500">Creator name</FormLabel>
-              <FormControl>
-                <Input placeholder="Creator name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="creatorEmail"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-gray-500">Creator email</FormLabel>
-              <FormControl>
-                <Input placeholder="Email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="space-y-6 max-w-[600px]">
+          <FormField
+            control={form.control}
+            name="sheetName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-500">Sheet name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Sheet name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="creatorName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-500">Creator name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Creator name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="creatorEmail"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-500">Creator email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <div className="flex gap-4 pt-8">
           {viewMode === 'VIEWING' && (
             <Button type="button" onClick={onDelete} variant={'destructive'}>
@@ -194,11 +196,7 @@ export function SheetForm() {
             {form.formState.isDirty ? 'Cancel' : 'Close'}
           </Button>
           {form.formState.isDirty && (
-            <Button
-              type="submit"
-              // variant={'secondary'}
-              disabled={!form.formState.isValid}
-            >
+            <Button type="submit" disabled={!form.formState.isValid}>
               Save
             </Button>
           )}

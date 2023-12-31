@@ -22,7 +22,7 @@ const SheetView: React.FC = () => {
           orientation="horizontal"
           className="h-[1px] bg-primary opacity-10"
         />
-        <TabsContent value="sheetInfoView" className="p-8 ">
+        <TabsContent value="sheetInfoView">
           <SheetForm />
         </TabsContent>
       </Tabs>
@@ -41,10 +41,10 @@ const SheetView: React.FC = () => {
         orientation="horizontal"
         className="h-[1px] bg-primary opacity-10"
       />
-      <TabsContent value="sheetInfoView" className="p-8 ">
+      <TabsContent value="sheetInfoView">
         <SheetForm />
       </TabsContent>
-      <TabsContent value="sheetTableView" className="p-8 ">
+      <TabsContent value="sheetTableView">
         <SheetTable />
       </TabsContent>
     </Tabs>
