@@ -1,23 +1,27 @@
-import { getDefaultTable } from '@client/lib/utils';
+import { cn, getDefaultTable } from '@client/lib/utils';
 import { useAppStore } from '@client/store';
 import React from 'react';
 import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
 
 const SheetList: React.FC = () => {
-  const { sheets, updateSelectedSheet, updateNewSheet } = useAppStore();
+  const { sheets, updateSelectedSheet, updateNewSheet, selectedSheet } =
+    useAppStore();
 
   return (
-    <div className="min-w-[320px] bg-gray-900 max-h-full p-8 flex flex-col justify-between">
+    <div className="min-w-[320px] max-h-full p-8 flex flex-col justify-between ">
       {sheets && sheets.length > 0 && (
         <div className="flex flex-col gap-10">
+          <img
+            src={'/vahterus-logo.jpg'}
+            alt="Vahterus"
+            style={{ width: '300px', height: '48px', objectFit: 'cover' }}
+          />
           <div className="flex flex-col gap-2">
-            <div className="space-y-1">
-              <h4 className="text-sm font-medium leading-none text-white opacity-90">
-                All Sheets
-              </h4>
+            <div className="space-y-2">
+              <p className="text-sm font-medium leading-none text-gray-500 mb-4 mt-4">
+                All sheets
+              </p>
             </div>
-            <Separator className="mb-4 mt-2 bg-white opacity-60" />
             {[...sheets]
               .sort(
                 (a, b) =>
@@ -28,7 +32,12 @@ const SheetList: React.FC = () => {
                 <Button
                   key={sheet.sheetId}
                   onClick={() => updateSelectedSheet(sheet)}
-                  variant={'secondary'}
+                  variant={'outline'}
+                  className={cn(
+                    'justify-start',
+                    selectedSheet?.sheetId === sheet.sheetId &&
+                      'bg-primary text-white',
+                  )}
                 >
                   {sheet.sheetName}
                 </Button>

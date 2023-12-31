@@ -150,7 +150,7 @@ export function SheetForm() {
           name="sheetName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Sheet name</FormLabel>
+              <FormLabel className="text-gray-500">Sheet name</FormLabel>
               <FormControl>
                 <Input placeholder="Sheet name" {...field} />
               </FormControl>
@@ -163,7 +163,7 @@ export function SheetForm() {
           name="creatorName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Creator name</FormLabel>
+              <FormLabel className="text-gray-500">Creator name</FormLabel>
               <FormControl>
                 <Input placeholder="Creator name" {...field} />
               </FormControl>
@@ -176,7 +176,7 @@ export function SheetForm() {
           name="creatorEmail"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Creator email</FormLabel>
+              <FormLabel className="text-gray-500">Creator email</FormLabel>
               <FormControl>
                 <Input placeholder="Email" {...field} />
               </FormControl>
