@@ -1,5 +1,6 @@
 import { Cell, MergedCell } from '@client/trpc';
 import { clsx, type ClassValue } from 'clsx';
+import { RawCellContent } from 'hyperformula';
 import { twMerge } from 'tailwind-merge';
 import { DEFAULT_TABLE_DATA } from './constants';
 
@@ -25,19 +26,19 @@ export const convertCellListToTable = (cellList: Cell[]) => {
     if (!acc[cell.rowIndex]) {
       acc[cell.rowIndex] = [];
     }
-    acc[cell.rowIndex][cell.colIndex] = cell.value;
+    acc[cell.rowIndex][cell.colIndex] = cell.value || '';
     return acc;
   }, []);
 
   return table;
 };
 
-export const convertTableToCellList = (cells: (string | number | null)[][]) => {
+export const convertTableToCellList = (cells: RawCellContent[][]) => {
   const cellList = cells.reduce(
     (acc, row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         acc.push({
-          value: cell ? cell.toString() : null,
+          value: cell ? cell.toString() : '',
           rowIndex,
           colIndex,
         });
@@ -47,7 +48,7 @@ export const convertTableToCellList = (cells: (string | number | null)[][]) => {
     [] as {
       rowIndex: number;
       colIndex: number;
-      value: string | null;
+      value: string;
     }[],
   );
 

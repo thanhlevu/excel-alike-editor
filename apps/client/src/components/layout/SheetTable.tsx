@@ -12,8 +12,8 @@ import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.min.css';
 import { MergeCells } from 'handsontable/plugins';
 import { registerAllModules } from 'handsontable/registry';
-import { HyperFormula } from 'hyperformula';
-import React, { useMemo, useRef } from 'react';
+import { HyperFormula, RawCellContent } from 'hyperformula';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { Button } from '../ui/button';
 
 registerAllModules();
@@ -38,7 +38,6 @@ const SheetTable: React.FC = () => {
   } = useAppStore();
   const updateSheetTable = trpc.updateSheetTable.useMutation();
 
-  const [isTableChanged, setIsTableChanged] = React.useState(false);
   const defaultDataTable = useMemo(() => DEFAULT_TABLE_DATA, []);
 
   const tableData = useMemo(() => {
@@ -47,8 +46,6 @@ const SheetTable: React.FC = () => {
     }
     return defaultDataTable;
   }, [selectedSheet, defaultDataTable]);
-
-  const originalData = JSON.stringify(tableData);
 
   const mergeCells = useMemo(() => {
     if (selectedSheet) {
@@ -63,28 +60,10 @@ const SheetTable: React.FC = () => {
 
   const hotTableComponent = useRef<HotTable | null>(null);
 
-  const handleDataChange = () => {
+  const handleOnSave = useCallback(() => {
     const curCells =
-      hotTableComponent.current?.hotInstance?.getSourceData() as (
-        | string
-        | number
-        | null
-      )[][];
-
-    if (tableData && curCells && JSON.stringify(curCells) !== originalData) {
-      setIsTableChanged(true);
-    }
-  };
-
-  const handleOnSave = () => {
-    const curCells =
-      hotTableComponent.current?.hotInstance?.getSourceData() as (
-        | string
-        | number
-        | null
-      )[][];
-
-    const newCellSet = convertTableToCellList(curCells);
+      hotTableComponent.current?.hotInstance?.getData() as RawCellContent[][];
+    const newCellList = convertTableToCellList(curCells);
 
     const mergeCellsPlugin: ExtendedMergeCells | undefined =
       hotTableComponent.current?.hotInstance?.getPlugin('mergeCells');
@@ -95,7 +74,7 @@ const SheetTable: React.FC = () => {
     updateSheetTable.mutate(
       {
         sheetId: selectedSheet!.sheetId,
-        newCells: newCellSet,
+        newCells: newCellList,
         newMergedCells: newMergeCellSet,
       },
       {
@@ -109,16 +88,23 @@ const SheetTable: React.FC = () => {
               return sheet;
             }),
           );
-          setIsTableChanged(false);
+          hotTableComponent.current?.hotInstance?.loadData(
+            convertCellListToTable(data.cells),
+          );
         },
       },
     );
-  };
+  }, [
+    selectedSheet,
+    sheets,
+    updateSelectedSheet,
+    updateSheetTable,
+    updateSheets,
+  ]);
 
   const handleOnCancel = () => {
     updateSelectedSheet(null);
     updateViewMode(null);
-    setIsTableChanged(false);
   };
 
   return (
@@ -137,37 +123,6 @@ const SheetTable: React.FC = () => {
         manualRowMove={true}
         contextMenu={true}
         mergeCells={mergeCells}
-        afterChange={() => {
-          // observe changes on cell level
-          handleDataChange();
-        }}
-        afterModifyTransformStart={() => {
-          handleDataChange();
-        }}
-        afterCreateRow={() => {
-          handleDataChange();
-        }}
-        afterCreateCol={() => {
-          handleDataChange();
-        }}
-        afterRemoveRow={() => {
-          handleDataChange();
-        }}
-        afterRemoveCol={() => {
-          handleDataChange();
-        }}
-        afterColumnMove={() => {
-          handleDataChange();
-        }}
-        afterRowMove={() => {
-          handleDataChange();
-        }}
-        afterMergeCells={() => {
-          handleDataChange();
-        }}
-        afterUnmergeCells={() => {
-          handleDataChange();
-        }}
         renderer={'html'}
         licenseKey="non-commercial-and-evaluation"
       />
@@ -175,12 +130,7 @@ const SheetTable: React.FC = () => {
         <Button type="button" onClick={handleOnCancel} variant={'outline'}>
           Close
         </Button>
-        <Button
-          type="button"
-          onClick={handleOnSave}
-          variant={'default'}
-          className={`${!isTableChanged && 'hidden'}`}
-        >
+        <Button type="button" onClick={handleOnSave} variant={'default'}>
           Save
         </Button>
       </div>
