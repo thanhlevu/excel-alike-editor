@@ -17,8 +17,12 @@ const SheetView: React.FC = () => {
       className="w-full border-l border-white border-opacity-10 mt-4"
     >
       <TabsList className="m-8 mb-0">
-        <TabsTrigger value="sheetInfoView">Sheet Info</TabsTrigger>
-        <TabsTrigger value="sheetTableView">Sheet Table</TabsTrigger>
+        <TabsTrigger value="sheetInfoView" data-testid="sheetInfoView-btn">
+          Sheet Info
+        </TabsTrigger>
+        <TabsTrigger value="sheetTableView" data-testid="sheetTableView-btn">
+          Sheet Table
+        </TabsTrigger>
       </TabsList>
       <Separator
         orientation="horizontal"

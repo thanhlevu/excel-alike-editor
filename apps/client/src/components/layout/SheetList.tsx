@@ -16,7 +16,7 @@ const SheetList: React.FC = () => {
             alt="Vahterus"
             style={{ width: '300px', height: '48px', objectFit: 'cover' }}
           />
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2" data-testid="sheet-btn-list">
             <div className="space-y-2">
               <p className="text-sm font-medium leading-none text-gray-500 mb-4 mt-4">
                 All sheets
@@ -46,6 +46,7 @@ const SheetList: React.FC = () => {
         </div>
       )}
       <Button
+        data-testid="add-new-sheet-btn"
         onClick={() => {
           updateNewSheet({
             sheetName: '',

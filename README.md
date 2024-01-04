@@ -14,3 +14,8 @@
 
 - To view database with prisma studio, in server repo:
   $ npx prisma studio
+
+# How to run E2E test in project
+
+$ cd client
+$ npx cypress open

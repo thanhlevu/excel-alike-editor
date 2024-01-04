@@ -18,11 +18,11 @@ import { trpc } from '@client/trpc';
 import { useEffect, useMemo } from 'react';
 
 const formSchema = z.object({
-  sheetName: z.string().min(2, {
-    message: 'sheet Name must be at least 2 characters.',
+  sheetName: z.string().min(3, {
+    message: 'sheet Name must be at least 3 characters.',
   }),
-  creatorName: z.string().min(2, {
-    message: 'User name must be at least 2 characters.',
+  creatorName: z.string().min(3, {
+    message: 'User name must be at least 3 characters.',
   }),
   creatorEmail: z.string().email(),
 });
@@ -144,18 +144,27 @@ export function SheetForm() {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col max-h-full space-between w-full p-8"
+        data-testid="sheet-form"
       >
-        <div className="space-y-6 max-w-[600px]">
+        <div className="space-y-7 max-w-[600px]">
           <FormField
             control={form.control}
             name="sheetName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="relative">
                 <FormLabel className="text-gray-500">Sheet name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Sheet name" {...field} />
+                  <Input
+                    placeholder="Sheet name"
+                    {...field}
+                    data-testid="sheetName"
+                    className="mt-2"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage
+                  className="absolute mt-1"
+                  data-testid="sheetName-error"
+                />
               </FormItem>
             )}
           />
@@ -163,12 +172,20 @@ export function SheetForm() {
             control={form.control}
             name="creatorName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="relative">
                 <FormLabel className="text-gray-500">Creator name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Creator name" {...field} />
+                  <Input
+                    placeholder="Creator name"
+                    {...field}
+                    data-testid="creatorName"
+                    className="mt-2"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage
+                  className="absolute mt-[-2px]!important"
+                  data-testid="creatorName-error"
+                />
               </FormItem>
             )}
           />
@@ -176,27 +193,45 @@ export function SheetForm() {
             control={form.control}
             name="creatorEmail"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="relative">
                 <FormLabel className="text-gray-500">Creator email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email" {...field} />
+                <FormControl className="mt-2">
+                  <Input
+                    placeholder="Email"
+                    {...field}
+                    data-testid="creatorEmail"
+                    className="mt-2"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage
+                  className="absolute mt-1"
+                  data-testid="creatorEmail-error"
+                />
               </FormItem>
             )}
           />
         </div>
         <div className="flex gap-4 pt-8">
           {viewMode === 'VIEWING' && (
-            <Button type="button" onClick={onDelete} variant={'destructive'}>
+            <Button
+              type="button"
+              onClick={onDelete}
+              variant={'destructive'}
+              data-testid="delete-btn"
+            >
               Delete
             </Button>
           )}
-          <Button type="button" onClick={onClose} variant={'secondary'}>
+          <Button
+            type="button"
+            onClick={onClose}
+            variant={'secondary'}
+            data-testid="cancel-btn"
+          >
             {form.formState.isDirty ? 'Cancel' : 'Close'}
           </Button>
           {form.formState.isDirty && (
-            <Button type="submit" disabled={!form.formState.isValid}>
+            <Button type="submit" data-testid="save-btn">
               Save
             </Button>
           )}

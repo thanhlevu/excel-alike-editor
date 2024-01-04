@@ -108,7 +108,7 @@ const SheetTable: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full p-8">
+    <div className="w-full h-full p-8" data-testid="sheetTableView">
       <HotTable
         ref={hotTableComponent}
         formulas={{
@@ -127,10 +127,20 @@ const SheetTable: React.FC = () => {
         licenseKey="non-commercial-and-evaluation"
       />
       <div className={cn('flex gap-4 pt-8')}>
-        <Button type="button" onClick={handleOnCancel} variant={'outline'}>
+        <Button
+          type="button"
+          onClick={handleOnCancel}
+          variant={'outline'}
+          data-testid="table-close-btn"
+        >
           Close
         </Button>
-        <Button type="button" onClick={handleOnSave} variant={'default'}>
+        <Button
+          type="button"
+          onClick={handleOnSave}
+          variant={'default'}
+          data-testid="table-save-btn"
+        >
           Save
         </Button>
       </div>
