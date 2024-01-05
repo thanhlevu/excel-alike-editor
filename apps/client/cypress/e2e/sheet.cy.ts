@@ -157,6 +157,9 @@ describe('Sheet update', () => {
       .find('tbody tr:nth-child(2) td:nth-child(3)')
       .should('have.css', 'display', 'none');
     cy.get('button[data-testid="table-save-btn"]').click();
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td:nth-child(6)')
+      .should('have.text', '97');
   });
 
   it('should update the table by adding new column, then save', () => {
@@ -195,6 +198,9 @@ describe('Sheet update', () => {
       .should('have.text', '25');
     cy.get('button[data-testid="table-save-btn"]').click();
     cy.get('@hotTable').find('thead th').should('have.length', 6);
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td:nth-child(6)')
+      .should('have.text', '73');
   });
 
   it('should update the table by adding a new row', () => {

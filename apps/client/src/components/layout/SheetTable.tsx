@@ -12,7 +12,7 @@ import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.min.css';
 import { MergeCells } from 'handsontable/plugins';
 import { registerAllModules } from 'handsontable/registry';
-import { HyperFormula, RawCellContent } from 'hyperformula';
+import { HyperFormula } from 'hyperformula';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Button } from '../ui/button';
 
@@ -36,7 +36,7 @@ const SheetTable: React.FC = () => {
     updateSheets,
     updateViewMode,
   } = useAppStore();
-  const updateSheetTable = trpc.updateSheetTable.useMutation();
+  const { mutate: updateSheetTable } = trpc.updateSheetTable.useMutation();
 
   const defaultDataTable = useMemo(() => DEFAULT_TABLE_DATA, []);
 
@@ -54,15 +54,22 @@ const SheetTable: React.FC = () => {
     return [];
   }, [selectedSheet]);
 
-  const hyperformulaInstance = HyperFormula.buildEmpty({
-    licenseKey: 'internal-use-in-handsontable',
-  });
+  const hyperformulaInstance = useMemo(
+    () =>
+      HyperFormula.buildEmpty({
+        licenseKey: 'internal-use-in-handsontable',
+      }),
+    [],
+  );
 
   const hotTableComponent = useRef<HotTable | null>(null);
 
   const handleOnSave = useCallback(() => {
-    const curCells =
-      hotTableComponent.current?.hotInstance?.getData() as RawCellContent[][];
+    const curCells = Object.values(
+      hyperformulaInstance.getAllSheetsSerialized(),
+    ).pop();
+    if (!curCells) return null;
+
     const newCellList = convertTableToCellList(curCells);
 
     const mergeCellsPlugin: ExtendedMergeCells | undefined =
@@ -71,7 +78,7 @@ const SheetTable: React.FC = () => {
       mergeCellsPlugin?.mergedCellsCollection?.mergedCells || [];
     const newMergeCellSet = convertTableToMergeCellList(curMergeCells);
 
-    updateSheetTable.mutate(
+    updateSheetTable(
       {
         sheetId: selectedSheet!.sheetId,
         newCells: newCellList,
@@ -95,6 +102,7 @@ const SheetTable: React.FC = () => {
       },
     );
   }, [
+    hyperformulaInstance,
     selectedSheet,
     sheets,
     updateSelectedSheet,
