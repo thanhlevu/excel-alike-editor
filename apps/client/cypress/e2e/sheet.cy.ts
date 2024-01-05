@@ -132,13 +132,14 @@ describe('Sheet update', () => {
     cy.get('@hotTable')
       .find('tbody tr:nth-child(3) td:nth-child(6)')
       .should('have.text', '120');
-    cy.get('button[data-testid="add-new-sheet-btn"]').click();
+    cy.visit('http://localhost:5173/');
     cy.get('button:contains("The testing sheet")').click();
     cy.get('button[data-testid="sheetTableView-btn"]').click();
     cy.get('@hotTable')
       .find('tbody tr:nth-child(3) td:nth-child(6)')
       .should('have.text', '120');
   });
+
   it('should update the table by merging cells, then save', () => {
     cy.visit('http://localhost:5173/');
     cy.get('button:contains("The testing sheet")').click();
@@ -155,6 +156,86 @@ describe('Sheet update', () => {
     cy.get('@hotTable')
       .find('tbody tr:nth-child(2) td:nth-child(3)')
       .should('have.css', 'display', 'none');
+    cy.get('button[data-testid="table-save-btn"]').click();
+  });
+
+  it('should update the table by adding new column, then save', () => {
+    cy.visit('http://localhost:5173/');
+    cy.get('button:contains("The testing sheet")').click();
+    cy.get('button[data-testid="sheetTableView-btn"]').click();
+    cy.get('.handsontable.ht_master').as('hotTable');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(2) td:nth-child(2)')
+      .should('have.text', '22');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(2) td:nth-child(2)')
+      .rightclick();
+    cy.get('td[aria-label="Insert column left"]').click();
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(2) td:nth-child(2)')
+      .should('have.text', '');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(2) td:nth-child(3)')
+      .should('have.text', '22');
+    cy.get('button[data-testid="table-save-btn"]').click();
+    cy.get('@hotTable').find('thead th').should('have.length', 7);
+  });
+
+  it('should update the table by removing a column', () => {
+    cy.visit('http://localhost:5173/');
+    cy.get('button:contains("The testing sheet")').click();
+    cy.get('button[data-testid="sheetTableView-btn"]').click();
+    cy.get('.handsontable.ht_master').as('hotTable');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(2) td:nth-child(5)')
+      .rightclick();
+    cy.get('td[aria-label="Remove column"]').click();
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(2) td:nth-child(5)')
+      .should('have.text', '25');
+    cy.get('button[data-testid="table-save-btn"]').click();
+    cy.get('@hotTable').find('thead th').should('have.length', 6);
+  });
+
+  it('should update the table by adding a new row', () => {
+    cy.visit('http://localhost:5173/');
+    cy.get('button:contains("The testing sheet")').click();
+    cy.get('button[data-testid="sheetTableView-btn"]').click();
+    cy.get('.handsontable.ht_master').as('hotTable');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(2) td:nth-child(5)')
+      .rightclick();
+    cy.get('td[aria-label="Insert row below"]').click();
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td')
+      .should('have.text', '');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td:nth-child(2)')
+      .type('32');
+    cy.get('button[data-testid="table-save-btn"]').click();
+    cy.get('@hotTable').find('tbody tr').should('have.length', 5);
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td:nth-child(2)')
+      .should('have.text', '32');
+  });
+
+  it('should update the table by removing a row', () => {
+    cy.visit('http://localhost:5173/');
+    cy.get('button:contains("The testing sheet")').click();
+    cy.get('button[data-testid="sheetTableView-btn"]').click();
+    cy.get('.handsontable.ht_master').as('hotTable');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td:nth-child(2)')
+      .should('have.text', '32');
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td:nth-child(5)')
+      .rightclick();
+    cy.get('td[aria-label="Remove row"]').click();
+    cy.get('@hotTable')
+      .find('tbody tr:nth-child(3) td:nth-child(2)')
+      .should('have.text', '');
+    cy.get('button[data-testid="table-save-btn"]').click();
+    cy.get('@hotTable').find('tbody tr').should('have.length', 4);
   });
 });
 
