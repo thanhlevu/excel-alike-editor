@@ -170,24 +170,25 @@ export class TrpcRouter {
       .input(z.object({ sheetId: z.string().uuid() }))
       .mutation(async ({ input }) => {
         try {
+          const { sheetId } = input;
           await prisma.$transaction(async (prisma) => {
             await prisma.sheet.delete({
               where: {
-                sheetId: input.sheetId,
+                sheetId,
               },
             });
             await prisma.cell.deleteMany({
               where: {
-                sheetId: input.sheetId,
+                sheetId,
               },
             });
             await prisma.mergedCell.deleteMany({
               where: {
-                sheetId: input.sheetId,
+                sheetId,
               },
             });
           });
-          return input.sheetId;
+          return { sheetId };
         } catch (error) {
           console.error('Error deleting sheet:', error);
           throw new Error('Failed to delete sheet');
