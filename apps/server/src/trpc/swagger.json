@@ -1,0 +1,592 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Sheet CRUD REST API",
+    "description": "Designed to create, read, update and delete sheets and their data: sheet info and sheet tables"
+  },
+  "paths": {
+    "/createSheet": {
+      "parameters": [
+        {
+          "name": "SheetCreationInput",
+          "in": "query",
+          "description": "The input for creating a new sheet",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SheetCreationInput"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Used to create a new sheet with custom info and the default table",
+        "responses": {
+          "200": {
+            "description": "Return the created sheet with its info and table",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Sheet"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns error message in case the validation fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Returns error message in case the prisma transaction fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateSheetInfo": {
+      "parameters": [
+        {
+          "name": "SheetInfoUpdateInput",
+          "in": "query",
+          "description": "The input for updating the info of a sheet",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SheetInfoUpdateInput"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Used to update the info of a sheet",
+        "responses": {
+          "200": {
+            "description": "The sheet corresponding to the provided sheetId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SheetInfoUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns error message in case the validation fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Returns error message in case the prisma transaction fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateSheetTable": {
+      "parameters": [
+        {
+          "name": "SheetTableUpdateInput",
+          "in": "query",
+          "description": "The input for updating the table of a sheet",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SheetTableUpdateInput"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Used to update the table of a sheet",
+        "responses": {
+          "200": {
+            "description": "The sheet corresponding to the provided sheetId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Sheet"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns error message in case the validation fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Returns error message in case the prisma transaction fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getAllSheets": {
+      "get": {
+        "summary": "Used to read all sheets and their data: sheet info and sheet tables",
+        "responses": {
+          "200": {
+            "description": "The sheets and their data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sheets"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Returns error message in case the prisma transaction fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deleteSheet": {
+      "parameters": [
+        {
+          "name": "sheetId",
+          "in": "query",
+          "description": "The unique identifier of a sheet",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SheetId"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Delete a sheet",
+        "responses": {
+          "200": {
+            "description": "The sheet corresponding to the provided sheetId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSheetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns error message in case the validation fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Returns error message in case the sheet not found or the prisma transaction fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SheetId": {
+        "description": "The unique identifier of a sheet",
+        "type": "string"
+      },
+      "Sheet": {
+        "type": "object",
+        "required": [
+          "sheetId",
+          "sheetName",
+          "createdAt",
+          "lastEditedAt",
+          "creatorName",
+          "creatorEmail"
+        ],
+        "properties": {
+          "sheetId": {
+            "$ref": "#/components/schemas/SheetId"
+          },
+          "sheetName": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "lastEditedAt": {
+            "type": "string"
+          },
+          "creatorName": {
+            "type": "string"
+          },
+          "creatorEmail": {
+            "type": "string"
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            }
+          },
+          "mergedCells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MergedCell"
+            }
+          }
+        }
+      },
+      "Cell": {
+        "type": "object",
+        "required": [
+          "sheetId",
+          "rowIndex",
+          "colIndex",
+          "value"
+        ],
+        "properties": {
+          "sheetId": {
+            "$ref": "#/components/schemas/SheetId"
+          },
+          "rowIndex": {
+            "type": "string"
+          },
+          "colIndex": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "MergedCell": {
+        "type": "object",
+        "required": [
+          "sheetId",
+          "startRowIndex",
+          "endRowIndex",
+          "startColIndex",
+          "endColIndex"
+        ],
+        "properties": {
+          "sheetId": {
+            "$ref": "#/components/schemas/SheetId"
+          },
+          "startRowIndex": {
+            "type": "string"
+          },
+          "endRowIndex": {
+            "type": "string"
+          },
+          "startColIndex": {
+            "type": "string"
+          },
+          "endColIndex": {
+            "type": "string"
+          }
+        }
+      },
+      "Sheets": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Sheet"
+        }
+      },
+      "SheetCreationInput": {
+        "type": "object",
+        "required": [
+          "sheetName",
+          "creatorName",
+          "creatorEmail",
+          "cells",
+          "mergedCells"
+        ],
+        "properties": {
+          "sheetName": {
+            "type": "string"
+          },
+          "creatorName": {
+            "type": "string"
+          },
+          "creatorEmail": {
+            "type": "string"
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cell",
+              "properties": {
+                "sheetId": {
+                  "$ref": "#/components/schemas/SheetId"
+                },
+                "rowIndex": {
+                  "type": "string"
+                },
+                "colIndex": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "sheetId": "string",
+                "rowIndex": "string",
+                "colIndex": "string",
+                "value": "string"
+              }
+            }
+          },
+          "mergedCells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MergedCell"
+            }
+          }
+        }
+      },
+      "SheetInfoUpdateInput": {
+        "type": "object",
+        "required": [
+          "sheetId",
+          "sheetName",
+          "creatorName",
+          "creatorEmail"
+        ],
+        "properties": {
+          "sheetId": {
+            "$ref": "#/components/schemas/SheetId"
+          },
+          "sheetName": {
+            "type": "string"
+          },
+          "creatorName": {
+            "type": "string"
+          },
+          "creatorEmail": {
+            "type": "string"
+          }
+        }
+      },
+      "SheetInfoUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "sheetId": {
+                    "$ref": "#/components/schemas/SheetId"
+                  },
+                  "sheetName": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "lastEditedAt": {
+                    "type": "string"
+                  },
+                  "creatorName": {
+                    "type": "string"
+                  },
+                  "creatorEmail": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SheetTableUpdateInput": {
+        "type": "object",
+        "required": [
+          "sheetId",
+          "newCells",
+          "newMergedCells"
+        ],
+        "properties": {
+          "sheetId": {
+            "$ref": "#/components/schemas/SheetId"
+          },
+          "newCells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            }
+          },
+          "newMergedCells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MergedCell"
+            }
+          }
+        }
+      },
+      "Error400Response": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "code": {
+                "type": "number"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "httpStatus": {
+                    "type": "integer",
+                    "enum": [
+                      400
+                    ]
+                  },
+                  "stack": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error500Response": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "code": {
+                "type": "number"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "httpStatus": {
+                    "type": "integer",
+                    "enum": [
+                      500
+                    ]
+                  },
+                  "stack": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "DeleteSheetResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "sheetId": {
+                    "$ref": "#/components/schemas/SheetId"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Api-Key"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKey": []
+    }
+  ]
+}
