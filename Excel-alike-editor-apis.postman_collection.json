@@ -1,0 +1,158 @@
+{
+	"info": {
+		"_postman_id": "dc69c17e-e838-4a91-8902-4e076a20017e",
+		"name": "Excel-alike-editor-apis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5850844"
+	},
+	"item": [
+		{
+			"name": "Create sheet",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sheetName\": \"the sheet B\",\n    \"creatorName\": \"creator B\",\n    \"creatorEmail\": \"creator-a@gmail.com\",\n    \"cells\": [\n        {\n            \"rowIndex\": 0,\n            \"colIndex\": 0,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 0,\n            \"colIndex\": 1,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 0,\n            \"colIndex\": 2,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 0,\n            \"colIndex\": 3,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 0,\n            \"colIndex\": 4,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 1,\n            \"colIndex\": 0,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 1,\n            \"colIndex\": 1,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 1,\n            \"colIndex\": 2,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 1,\n            \"colIndex\": 3,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 1,\n            \"colIndex\": 4,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 2,\n            \"colIndex\": 0,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 2,\n            \"colIndex\": 1,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 2,\n            \"colIndex\": 2,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 2,\n            \"colIndex\": 3,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 2,\n            \"colIndex\": 4,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 3,\n            \"colIndex\": 0,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 3,\n            \"colIndex\": 1,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 3,\n            \"colIndex\": 2,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 3,\n            \"colIndex\": 3,\n            \"value\": \"\"\n        },\n        {\n            \"rowIndex\": 3,\n            \"colIndex\": 4,\n            \"value\": \"\"\n        }\n    ],\n    \"mergedCells\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{trpcUrl}}/createSheet",
+					"host": [
+						"{{trpcUrl}}"
+					],
+					"path": [
+						"createSheet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all sheets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{trpcUrl}}/getAllSheets",
+					"host": [
+						"{{trpcUrl}}"
+					],
+					"path": [
+						"getAllSheets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update sheet info",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sheetId\": \"9f39b44d-d507-4205-890b-3403b67d91d4\",\n    \"sheetName\": \"new sheet name\",\n    \"creatorName\": \"new sheet creator name\",\n    \"creatorEmail\": \"new-tester@gmai.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{trpcUrl}}/updateSheetInfo",
+					"host": [
+						"{{trpcUrl}}"
+					],
+					"path": [
+						"updateSheetInfo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update sheet table",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sheetId\": \"9f39b44d-d507-4205-890b-3403b67d91d4\",\n    \"newCells\": [\n        {\n            \"value\": \"\",\n            \"rowIndex\": 0,\n            \"colIndex\": 0\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 0,\n            \"colIndex\": 1\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 0,\n            \"colIndex\": 2\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 0,\n            \"colIndex\": 3\n        },\n        {\n            \"value\": \"1\",\n            \"rowIndex\": 0,\n            \"colIndex\": 4\n        },\n        {\n            \"value\": \"1\",\n            \"rowIndex\": 1,\n            \"colIndex\": 0\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 1,\n            \"colIndex\": 1\n        },\n        {\n            \"value\": \"4\",\n            \"rowIndex\": 1,\n            \"colIndex\": 2\n        },\n        {\n            \"value\": \"5\",\n            \"rowIndex\": 1,\n            \"colIndex\": 3\n        },\n        {\n            \"value\": \"35.5\",\n            \"rowIndex\": 1,\n            \"colIndex\": 4\n        },\n        {\n            \"value\": \"1\",\n            \"rowIndex\": 1,\n            \"colIndex\": 5\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 2,\n            \"colIndex\": 0\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 2,\n            \"colIndex\": 1\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 2,\n            \"colIndex\": 2\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 2,\n            \"colIndex\": 3\n        },\n        {\n            \"value\": \"3\",\n            \"rowIndex\": 2,\n            \"colIndex\": 4\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 3,\n            \"colIndex\": 0\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 3,\n            \"colIndex\": 1\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 3,\n            \"colIndex\": 2\n        },\n        {\n            \"value\": \"\",\n            \"rowIndex\": 3,\n            \"colIndex\": 3\n        },\n        {\n            \"value\": \"2\",\n            \"rowIndex\": 3,\n            \"colIndex\": 4\n        }\n    ],\n    \"newMergedCells\": [\n        {\n            \"startRowIndex\": 1,\n            \"endRowIndex\": 3,\n            \"startColIndex\": 0,\n            \"endColIndex\": 1\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{trpcUrl}}/updateSheetTable",
+					"host": [
+						"{{trpcUrl}}"
+					],
+					"path": [
+						"updateSheetTable"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete sheet",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sheetId\": \"05781a25-885b-4d72-abe6-c347a807d599\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{trpcUrl}}/deleteSheet",
+					"host": [
+						"{{trpcUrl}}"
+					],
+					"path": [
+						"deleteSheet"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "trpcUrl",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
