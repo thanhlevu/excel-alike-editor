@@ -1,4 +1,3 @@
-import { DEFAULT_TABLE_DATA } from '@client/lib/constants';
 import {
   cn,
   convertCellListToTable,
@@ -38,14 +37,9 @@ const SheetTable: React.FC = () => {
   } = useAppStore();
   const { mutate: updateSheetTable } = trpc.updateSheetTable.useMutation();
 
-  const defaultDataTable = useMemo(() => DEFAULT_TABLE_DATA, []);
-
   const tableData = useMemo(() => {
-    if (selectedSheet) {
-      return convertCellListToTable(selectedSheet.cells);
-    }
-    return defaultDataTable;
-  }, [selectedSheet, defaultDataTable]);
+    return selectedSheet ? convertCellListToTable(selectedSheet.cells) : null;
+  }, [selectedSheet]);
 
   const mergeCells = useMemo(() => {
     if (selectedSheet) {
@@ -110,10 +104,12 @@ const SheetTable: React.FC = () => {
     updateSheets,
   ]);
 
-  const handleOnCancel = () => {
+  const handleOnCancel = useCallback(() => {
     updateSelectedSheet(null);
     updateViewMode(null);
-  };
+  }, [updateSelectedSheet, updateViewMode]);
+
+  if (!tableData) return null;
 
   return (
     <div className="w-full h-full p-8" data-testid="sheetTableView">

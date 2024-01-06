@@ -1,4 +1,3 @@
-// store.ts
 import { Sheet, SheetCreationInput } from '@client/trpc';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
@@ -63,29 +62,9 @@ export const useAppStore = create<StoreState>()(
             ),
           updateViewMode: (mode: 'CREATION' | 'VIEWING' | null) =>
             set(
-              () => {
-                // if (mode === null)
-                //   return {
-                //     viewMode: null,
-                //     selectedSheet: null,
-                //     newSheet: null,
-                //   };
-                // if (mode === 'CREATION')
-                //   return {
-                //     viewMode: 'CREATION',
-                //     selectedSheet: null,
-                //   };
-                // if (mode === 'VIEWING')
-                //   return {
-                //     viewMode: 'VIEWING',
-                //     selectedSheet: null,
-                //     newSheet: null,
-                //   };
-
-                return {
-                  viewMode: mode,
-                };
-              },
+              () => ({
+                viewMode: mode,
+              }),
               false,
               'updateViewMode',
             ),
