@@ -69,109 +69,129 @@ export class TrpcRouter {
     updateSheetInfo: this.trpc.procedure
       .input(SheetInfoUpdateInput)
       .mutation(async ({ input }) => {
-        const newSheetInfo = input;
-        const updatedSheetInfo = await prisma.sheet.update({
-          data: {
-            ...newSheetInfo,
-            lastEditedAt: new Date(),
-          },
-          where: {
-            sheetId: newSheetInfo.sheetId,
-          },
-        });
-        return updatedSheetInfo;
+        try {
+          const newSheetInfo = input;
+          const updatedSheetInfo = await prisma.sheet.update({
+            data: {
+              ...newSheetInfo,
+              lastEditedAt: new Date(),
+            },
+            where: {
+              sheetId: newSheetInfo.sheetId,
+            },
+          });
+          return updatedSheetInfo;
+        } catch (error) {
+          console.error('Error updating sheet info:', error);
+          throw new Error('Failed to update sheet info');
+        }
       }),
     updateSheetTable: this.trpc.procedure
       .input(SheetTableUpdateInput)
       .mutation(async ({ input }) => {
-        const { sheetId, newCells, newMergedCells } = input;
-        const updatedSheetData = await prisma.$transaction(async (prisma) => {
-          await prisma.cell.deleteMany({
-            where: {
-              sheetId,
-            },
-          });
-
-          await prisma.mergedCell.deleteMany({
-            where: {
-              sheetId,
-            },
-          });
-
-          await prisma.cell.createMany({
-            data: newCells.map((cell) => ({
-              ...cell,
-              sheetId,
-            })),
-          });
-
-          await prisma.mergedCell.createMany({
-            data: newMergedCells.map((mergedCell) => ({
-              ...mergedCell,
-              sheetId,
-            })),
-          });
-
-          const updatedSheet = await prisma.sheet.findUnique({
-            where: {
-              sheetId,
-            },
-            include: {
-              Cells: true,
-              MergedCells: true,
-            },
-          });
-
-          if (!updatedSheet) {
-            throw new TRPCError({
-              code: 'NOT_FOUND',
-              message: 'Sheet not found',
+        try {
+          const { sheetId, newCells, newMergedCells } = input;
+          const updatedSheetData = await prisma.$transaction(async (prisma) => {
+            await prisma.cell.deleteMany({
+              where: {
+                sheetId,
+              },
             });
-          }
-          const { Cells, MergedCells, ...sheet } = updatedSheet;
-          return {
-            ...sheet,
-            cells: Cells || [],
-            mergedCells: MergedCells || [],
-          };
-        });
 
-        return updatedSheetData;
+            await prisma.mergedCell.deleteMany({
+              where: {
+                sheetId,
+              },
+            });
+
+            await prisma.cell.createMany({
+              data: newCells.map((cell) => ({
+                ...cell,
+                sheetId,
+              })),
+            });
+
+            await prisma.mergedCell.createMany({
+              data: newMergedCells.map((mergedCell) => ({
+                ...mergedCell,
+                sheetId,
+              })),
+            });
+
+            const updatedSheet = await prisma.sheet.findUnique({
+              where: {
+                sheetId,
+              },
+              include: {
+                Cells: true,
+                MergedCells: true,
+              },
+            });
+
+            if (!updatedSheet) {
+              throw new TRPCError({
+                code: 'NOT_FOUND',
+                message: 'Sheet not found',
+              });
+            }
+            const { Cells, MergedCells, ...sheet } = updatedSheet;
+            return {
+              ...sheet,
+              cells: Cells || [],
+              mergedCells: MergedCells || [],
+            };
+          });
+
+          return updatedSheetData;
+        } catch (error) {
+          console.error('Error updating sheet table:', error);
+          throw new Error('Failed to update sheet table');
+        }
       }),
     getAllSheets: this.trpc.procedure.query(async () => {
-      const sheet = await prisma.sheet.findMany({
-        include: {
-          Cells: true,
-          MergedCells: true,
-        },
-      });
-      return sheet.map(({ Cells, MergedCells, ...sheet }) => ({
-        ...sheet,
-        cells: Cells,
-        mergedCells: MergedCells,
-      }));
+      try {
+        const sheet = await prisma.sheet.findMany({
+          include: {
+            Cells: true,
+            MergedCells: true,
+          },
+        });
+        return sheet.map(({ Cells, MergedCells, ...sheet }) => ({
+          ...sheet,
+          cells: Cells,
+          mergedCells: MergedCells,
+        }));
+      } catch (error) {
+        console.error('Error getting all sheets:', error);
+        throw new Error('Failed to get all sheets');
+      }
     }),
     deleteSheet: this.trpc.procedure
       .input(z.object({ sheetId: z.string().uuid() }))
       .mutation(async ({ input }) => {
-        await prisma.$transaction(async (prisma) => {
-          await prisma.sheet.delete({
-            where: {
-              sheetId: input.sheetId,
-            },
+        try {
+          await prisma.$transaction(async (prisma) => {
+            await prisma.sheet.delete({
+              where: {
+                sheetId: input.sheetId,
+              },
+            });
+            await prisma.cell.deleteMany({
+              where: {
+                sheetId: input.sheetId,
+              },
+            });
+            await prisma.mergedCell.deleteMany({
+              where: {
+                sheetId: input.sheetId,
+              },
+            });
           });
-          await prisma.cell.deleteMany({
-            where: {
-              sheetId: input.sheetId,
-            },
-          });
-          await prisma.mergedCell.deleteMany({
-            where: {
-              sheetId: input.sheetId,
-            },
-          });
-        });
-        return input.sheetId;
+          return input.sheetId;
+        } catch (error) {
+          console.error('Error deleting sheet:', error);
+          throw new Error('Failed to delete sheet');
+        }
       }),
   });
 
