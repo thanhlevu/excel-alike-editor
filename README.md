@@ -2,19 +2,22 @@
 
 0. Open terminal and cd into the project.
 
-1. Get into server repository, then run postgresql database using docker:
+- Install pnpm to your machine: $ npm install -g pnpm
+- Install dependencies: $ pnpm install
 
-   - $ cd apps/server
-   - $ docker compose up dev-db -d
-   - $ npx prisma migrate dev
-   - $ npx prisma generate
+1.  Get into server repository, then run postgresql database using docker:
 
-2. At apps repository, run client and server apps:
+- $ cd apps/server
+- $ docker compose up dev-db -d
+- config database connection in /server/.env
+- $ npx prisma migrate dev
+
+2.  At apps repository, run client and server apps:
 
 - $ pnpm dev
 - Test the app at http://localhost:5173/
 - To view database with prisma studio, in server repo:
-  - $ npx prisma studio
+    - $ npx prisma studio
 
 # How to run E2E test in project
 
@@ -27,3 +30,4 @@
 
 - Sheet APIs documented with swagger.json in server repo
 - To have quick review, please go to https://editor.swagger.io/ , then import the file swagger.json to view all apis and descriptions.
+- To test API on Postman, please import file api.postman_collection.json into your Postman app.
