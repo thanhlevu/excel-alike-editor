@@ -4,6 +4,7 @@ import {
   convertMergeCellListToTable,
   convertTableToCellList,
   convertTableToMergeCellList,
+  unifiedTableCellData,
 } from '@client/lib/utils';
 import { useAppStore } from '@client/store';
 import { trpc } from '@client/trpc';
@@ -11,7 +12,7 @@ import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.min.css';
 import { MergeCells } from 'handsontable/plugins';
 import { registerAllModules } from 'handsontable/registry';
-import { HyperFormula } from 'hyperformula';
+import { HyperFormula, RawCellContent } from 'hyperformula';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Button } from '../ui/button';
 
@@ -62,9 +63,12 @@ const SheetTable: React.FC = () => {
     const curCells = Object.values(
       hyperformulaInstance.getAllSheetsSerialized(),
     ).pop();
+    const cellData =
+      hotTableComponent.current?.hotInstance?.getData() as RawCellContent[][];
     if (!curCells) return null;
 
-    const newCellList = convertTableToCellList(curCells);
+    const unifiedTableCells = unifiedTableCellData(curCells, cellData);
+    const newCellList = convertTableToCellList(unifiedTableCells);
 
     const mergeCellsPlugin: ExtendedMergeCells | undefined =
       hotTableComponent.current?.hotInstance?.getPlugin('mergeCells');

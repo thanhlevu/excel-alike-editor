@@ -83,3 +83,21 @@ export const convertTableToMergeCellList = (
     };
   });
 };
+
+export const unifiedTableCellData = (
+  serializedCells: RawCellContent[][],
+  cellData: RawCellContent[][],
+): RawCellContent[][] => {
+  return cellData.map((row, rowIndex) => {
+    return row.map((cell, colIndex) => {
+      if (!cell) {
+        return '';
+      } else {
+        if (serializedCells[rowIndex][colIndex]?.toString().startsWith('=')) {
+          return serializedCells[rowIndex][colIndex];
+        }
+        return cell;
+      }
+    });
+  });
+};

@@ -15,7 +15,7 @@ CREATE TABLE "Cell" (
     "sheetId" TEXT NOT NULL,
     "rowIndex" INTEGER NOT NULL,
     "colIndex" INTEGER NOT NULL,
-    "value" TEXT,
+    "value" TEXT NOT NULL,
 
     CONSTRAINT "Cell_pkey" PRIMARY KEY ("sheetId","rowIndex","colIndex")
 );

@@ -4,7 +4,7 @@ export const CellSchema = z.object({
   sheetId: z.string().uuid(),
   rowIndex: z.number().min(0),
   colIndex: z.number().min(0),
-  value: z.string().nullable(),
+  value: z.string(),
 });
 
 export const MergedCellsSchema = z.object({

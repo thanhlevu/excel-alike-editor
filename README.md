@@ -5,8 +5,9 @@
 1. Get into server repository, then run postgresql database using docker:
 
    - $ cd apps/server
-   - $ npx prisma migrate dev
    - $ docker compose up dev-db -d
+   - $ npx prisma migrate dev
+   - $ npx prisma generate
 
 2. At apps repository, run client and server apps:
 
